@@ -6,121 +6,46 @@ require_relative("../lib/crucible.rb")
 module Golden
   class Cli < Thor
     desc "build ", "build module at [path]"
+    method_option :verbose, :aliases => "-v", :desc => "Build with verbose logging"
     def build(fileName)
-      self.load
-      libName,extension = fileName.split('.')
-      if(!extension)
-        fileName = "#{libName}.go"
-      end
-      dir = Dir.pwd
-      golden_json = "#{dir}/golden.json"
-      if(File.exist?(golden_json))
-        golden_data = JSON.parse(File.open(golden_json).read)
-      else
-        golden_data = {}
-      end
-      path = dir+"/"+fileName
-      outfile = "#{libName}.so"
-      outpath = dir+"/"+libName
-      goVersion = system("go version")
-      if(!!goVersion)
-        if(File.exist?("#{path}/go.mod"))
-          puts "building module at #{path}"
-          puts "building standard lib"
-          system("go install -buildmode=shared -linkshared std")
-          puts "installing dependencies"
-          deps = system("go mod vendor")
-          if(!!deps)
-            puts "linking shared lib for module"
-            lnk = `go install -buildmode=shared -linkshared #{infile}`
-            puts lnk
-            puts "building shared lib for module"
-            bld = `go build -linkshared -o #{outfile}`
-            puts bld
-            system("go build -buildmode=c-shared -o #{outfile} #{fileName}")
-          end
-        else
-          puts "building #{fileName} to shared library #{outfile}"
-          system("go build -buildmode=c-shared -o #{outfile} #{fileName}")
-        end
-      else
-        puts "go not found."
-      end
-      file = File.open(path)
-      source_code = file.read
-      exports = source_code.scan(/\/\/\s?export(?<function>.+)/).flatten
-      puts "exports found:"
-      puts exports
-
-      golden_data[libName.to_sym] = {}
-      exports.each do |e|
-        function_name = e.chomp.lstrip
-        declaration_regex = Regexp.new("func #{function_name}\s?\((?<args>.*)\) (?<returns>.*) {")
-        export_data = {}
-        export_data[:args] = {}
-        args = source_code.scan(declaration_regex).flatten[0]
-        args = args[1,args.length-2]
-        args = args.split(',')
-        args.each do |arg|
-          name, type = arg.split(" ")
-          export_data[:args][name.to_sym] = type
-        end
-        export_data[:returns] = source_code.scan(declaration_regex).flatten[1]
-        # require "pry"
-        # binding.pry
-        golden_data[libName.to_sym][function_name.to_sym] = export_data
-      end
-      # require "pry"
-      # binding.pry
-      File.open(golden_json,"w") do |f|
-        f.write(JSON.pretty_generate(golden_data))
-      end
-      @crucible.packages[libName] = dir
+      self.load(options)
+      @crucible.build(fileName,Dir.pwd)
       self.save
     end
 
     desc "list ", "list all libraries built with golden"
+    method_option :verbose, :aliases => "-v", :desc => "List with package detail"
     def list
-      require "pry"
-      binding.pry
-      self.load
+      self.load(options)
       if(!@crucible.packages || @crucible.packages.keys.length == 0)
         puts "No packages have yet been built. Navigate to a go project and build one using 'golden build (packageName).'"
       else
         puts "Golden has access to the following libraries:"
-        puts @crucible.packages.keys
+        if(@crucible.verbose?)
+          @crucible.packages.each do |name, location|
+            puts "#{name}\t#{location}"
+          end
+        else
+          puts @crucible.packages.keys
+        end
       end
     end
 
     desc "install ", "install a library built with golden to the current ruby project"
+    method_option :verbose, :aliases => "-v", :desc => "Install with verbose logging"
     def install(packageName)
-      self.load
-      cwd = Dir.pwd
-      extDestination = File.expand_path(cwd+"/bin")
+      self.load(options)
       if(!!@crucible.packages[packageName])
-        if(!File.exist? extDestination)
-          Dir.mkdir extDestination
-        end
         puts "installing #{packageName}."
-        if(File.exist?(cwd+"/golden.json"))
-          golden_json = JSON.parse(File.open(cwd+"/golden.json").read)
-          new_package = JSON.parse(File.open(@crucible.packages[packageName]+"/golden.json").read)
-          golden_json = golden_json.merge(new_package)
-          File.open(cwd+"/golden.json","w") do |f|
-            f.write(JSON.pretty_generate(golden_json))
-          end
-        else
-          FileUtils.cp(@crucible.packages[packageName]+"/golden.json", cwd+"/golden.json")
-        end
-        FileUtils.cp(@crucible.packages[packageName]+"/#{packageName}.so", extDestination+"/#{packageName}.so")
+        @crucible.install(packageName)
       else
         puts "No packages named #{packageName} are yet known to golden. You can list all known packages with 'golden list'"
       end
     end
 
     protected
-    def load
-      @crucible = Golden::Crucible.new
+    def load(options=nil)
+      @crucible = Golden::Crucible.new(options)
     end
     def save
       @crucible.save
