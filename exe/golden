@@ -5,11 +5,31 @@ require 'json'
 require_relative("../lib/crucible.rb")
 module Golden
   class Cli < Thor
-    desc "build ", "build module at [path]"
+    desc "build ", "build library with the filename [fileName]"
     method_option :verbose, :aliases => "-v", :desc => "Build with verbose logging"
     def build(fileName)
       self.load(options)
       @crucible.build(fileName,Dir.pwd)
+      self.save
+    end
+
+    desc "clear ", "forget all known libraries"
+    method_option :force, :aliases => "-f", :desc => "Clear without confirmation."
+    def clear
+      self.load(options)
+      if(!options[:force])
+        puts "Golden will forget all known libraries (#{@crucible.packages.keys.length}). Do you want to proceed? (Yes/No)"
+        response = STDIN.gets.chomp
+        if(response == "Yes")
+          @crucible.clear
+          puts "Golden library cache cleared."
+        else
+          puts "clear cancelled. To clear Golden libraries, run 'golden clear' again and respond with 'Yes' (case sensitive)."
+        end
+      else
+        @crucible.clear
+        puts "Golden library cache cleared."
+      end
       self.save
     end
 
@@ -18,7 +38,7 @@ module Golden
     def list
       self.load(options)
       if(!@crucible.packages || @crucible.packages.keys.length == 0)
-        puts "No packages have yet been built. Navigate to a go project and build one using 'golden build (packageName).'"
+        puts "No libraries have yet been built. Navigate to a go project and build one using 'golden build (LibraryName).'"
       else
         puts "Golden has access to the following libraries:"
         if(@crucible.verbose?)
@@ -39,7 +59,7 @@ module Golden
         puts "installing #{packageName}."
         @crucible.install(packageName)
       else
-        puts "No packages named #{packageName} are yet known to golden. You can list all known packages with 'golden list'"
+        puts "No libraries named #{packageName} are yet known to golden. You can list all known libraries with 'golden list'"
       end
     end
 

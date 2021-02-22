@@ -4,7 +4,7 @@ module Golden
       attr_accessor :packages, :pkgLogFile
       def initialize(options=nil)
         @pkgLogFile = File.expand_path("~")+"/.golden_packages.json" # Persistent package log
-        # @pkgLogFile = File.expand_path(File.dirname(__FILE__)+"/../packages.json") # Installation specific package log
+        # @pkgLogFile = File.expand_path(File.dirname(__FILE__)+"/../packages.json") # Gemset specific package log
         # puts "opened package list at #{@pkgLogFile}"
         @options = options
         if(!File.exist?(@pkgLogFile))
@@ -115,6 +115,10 @@ module Golden
         else
           throw "No such package (#{packageName})."
         end
+      end
+      def clear
+        @packages = {}
+        save
       end
       def verbose?
         return (!!@options && !!@options[:verbose])
