@@ -1,0 +1,18 @@
+{
+  "libsum": {
+    "add": {
+      "args": {
+        "a": "int",
+        "b": "int"
+      },
+      "returns": "int"
+    },
+    "subtract": {
+      "args": {
+        "a": "int",
+        "b": "int"
+      },
+      "returns": "int"
+    }
+  }
+}
