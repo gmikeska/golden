@@ -10,7 +10,7 @@ Golden is a development tool that makes it easier to wrap Go libraries for use i
 * Converts .go files to .so shared libraries
 * Manages library exported function metadata in convenient JSON format
 
-## Usages
+## Usage
 On the command line (building the ["libsum.go" example](https://c7.se/go-and-ruby-ffi/))
 ```bash
 cd libsum
