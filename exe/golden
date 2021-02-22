@@ -5,7 +5,7 @@ require 'json'
 require_relative("../lib/crucible.rb")
 module Golden
   class Cli < Thor
-    desc "build ", "build library with the filename [fileName]"
+    desc "build [fileName]", "build library named [fileName]"
     method_option :verbose, :aliases => "-v", :desc => "Build with verbose logging"
     def build(fileName)
       self.load(options)
@@ -51,7 +51,7 @@ module Golden
       end
     end
 
-    desc "install ", "install a library built with golden to the current ruby project"
+    desc "install [fileName]", "install a library built with golden to the current ruby project"
     method_option :verbose, :aliases => "-v", :desc => "Install with verbose logging"
     def install(packageName)
       self.load(options)
