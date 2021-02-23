@@ -67,17 +67,32 @@ module Golden
         golden_data[libName] = {}
         exports.each do |e|
           function_name = e.chomp.lstrip
-          declaration_regex = Regexp.new("func #{function_name}\s?\((?<args>.*)\) (?<returns>.*) {")
+          declaration_regex = Regexp.new('\s*'+"func #{function_name}\s?\((?<args>.*)\) (?<returns>.*) {")
           export_data = {}
           export_data[:args] = {}
-          args = source_code.scan(declaration_regex).flatten[0]
+          declaration = source_code.scan(declaration_regex).flatten
+          args = declaration[0]
           args = args[1,args.length-2]
           args = args.split(',')
-          args.each do |arg|
+
+          args.each_with_index do |arg, i|
             name, type = arg.split(" ")
-            export_data[:args][name] = type
+            if(!!type && type != "")
+              export_data[:args][name] = type
+            else
+              type = nil
+              next_args = args.slice(i+1, args.length)
+              next_args.each do |next_arg|
+                potential_type = next_arg.split(" ")[1]
+                if(!!potential_type && !type && potential_type != "")
+                  type = potential_type
+                end
+              end
+              export_data[:args][name] = type
+            end
           end
-          export_data[:returns] = source_code.scan(declaration_regex).flatten[1]
+
+          export_data[:returns] = declaration[1]
           # require "pry"
           # binding.pry
           golden_data[libName][function_name] = export_data
