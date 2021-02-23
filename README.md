@@ -12,6 +12,25 @@ Golden is a development tool that makes it easier to wrap Go libraries for use i
 
 ## Usage
 On the command line (building the ["libsum.go" example](https://c7.se/go-and-ruby-ffi/))
+NOTE: Currently the code must explicitly specify type for each variable.
+```go
+package main
+
+import "C"
+
+//export add
+func add(a int, b int) int {
+  return a + b
+}
+//export subtract
+func subtract(a int, b int) int {
+  return a - b
+}
+
+func main() {}
+
+```
+
 ```bash
 cd libsum
 golden build libsum
@@ -19,6 +38,7 @@ golden build libsum
 cd ../golden-example
 golden install libsum
 ```
+
 Then, reference the library in your ruby project:
 ```ruby
 require "golden"
