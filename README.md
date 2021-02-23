@@ -11,7 +11,7 @@ Golden is a development tool that makes it easier to wrap Go libraries for use i
 * Manages library exported function metadata in convenient JSON format
 
 ## Usage
-On the command line (building the ["libsum.go" example](https://c7.se/go-and-ruby-ffi/))
+Building the ["libsum.go" example](https://c7.se/go-and-ruby-ffi/)
 NOTE: Currently the code must explicitly specify type for each variable.
 ```go
 package main
@@ -30,7 +30,7 @@ func subtract(a int, b int) int {
 func main() {}
 
 ```
-
+On the command line:
 ```bash
 cd libsum
 golden build libsum
