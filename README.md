@@ -19,8 +19,8 @@ package main
 import "C"
 
 //export add
-func add(a int, b int) int {
-  return a + b
+func add(a int, b int) int { // <------- In the original example, a shorthand type declaration is used
+  return a + b               //  func add(a, b int) <---- This syntax won't currently work, but will soon be supported.
 }
 //export subtract
 func subtract(a int, b int) int {
