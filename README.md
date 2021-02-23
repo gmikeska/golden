@@ -11,21 +11,21 @@ Golden is a development tool that makes it easier to wrap Go libraries for use i
 * Manages library exported function metadata in convenient JSON format
 
 ## Usage
-Building the ["libsum.go" example](https://c7.se/go-and-ruby-ffi/)
-NOTE: Currently the code must explicitly specify type for each variable.
+Building a slightly modified version of the ["libsum.go" example](https://c7.se/go-and-ruby-ffi/)
 ```go
 package main
 
 import "C"
 
 //export add
-func add(a int, b int) int { // <------- In the original example, a shorthand type declaration is used
-  return a + b               //  func add(a, b int) <---- This syntax won't currently work, but will soon be supported.
+func add(a int, b int) int {
+  return a + b
 }
 //export subtract
-func subtract(a int, b int) int {
+func subtract(a, b int) int { // as of 0.5.2 this shorthand parameter declaration is supported!
   return a - b
 }
+
 
 func main() {}
 
