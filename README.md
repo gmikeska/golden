@@ -1,4 +1,4 @@
-# Golden
+# Golden [![Gem Version](https://badge.fury.io/rb/golden.svg)](https://badge.fury.io/rb/golden)
 
 ## Description
 
