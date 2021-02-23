@@ -10,11 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["gmikeska07@gmail.com"]
 
   spec.summary       = %q{Golden is a development tool that makes it easier to wrap Go libraries for use in Ruby.}
-  spec.description   = %q{Golden is a development tool that makes it easier to wrap Go libraries for use in Ruby.
-    Features
-  * Usage similar to the every day package manager
-  * Converts .go files to .so shared libraries
-  * Manages library exported function metadata in convenient JSON format}
+  spec.description   = %q{Golden is a development tool that makes it easier to wrap Go libraries for use in Ruby.}
   spec.homepage      = "https://github.com/gmikeska/golden"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
