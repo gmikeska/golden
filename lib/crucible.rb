@@ -40,17 +40,37 @@ module Golden
         end
       end
 
-      def build(fileName,dir)
-        libName,extension = fileName.split('.')
-        if(!extension)
-          fileName = "#{libName}.go"
-        end
+      def load_golden_data(dir)
         golden_json = "#{dir}/golden.json"
+
         if(File.exist?(golden_json))
           golden_data = JSON.parse(File.open(golden_json).read)
         else
           golden_data = {}
         end
+        return golden_data
+      end
+
+      def save_golden_data(dir,golden_data)
+        File.open(golden_json,"w") do |f|
+          f.write(JSON.pretty_generate(golden_data))
+        end
+      end
+
+      def add_type(fileName, dir,type)
+        libName,extension = fileName.split('.')
+        golden_data = load_golden_data(dir)
+        if(!golden_data[libName]["_types"])
+          golden_data[libName]["_types"] = []
+        end
+        golden_data[libName]["_types"] << type
+        save_golden_data(dir,golden_data)
+      end
+
+
+      def build(fileName,dir)
+        libName,extension = fileName.split('.')
+        golden_data = load_golden_data(dir)
         path = dir+"/"+fileName
         outfile = "#{libName}.so"
         outpath = dir+"/"+libName
@@ -127,9 +147,7 @@ module Golden
         if(verbose?)
           puts "writing library export info to #{golden_json}"
         end
-        File.open(golden_json,"w") do |f|
-          f.write(JSON.pretty_generate(golden_data))
-        end
+        save_golden_data(dir,golden_data)
         @packages[libName] = dir
       end
 
@@ -165,7 +183,7 @@ module Golden
       def verbose?
         return (!!@options && !!@options[:verbose])
       end
-      
+
       def save
         # @pkgLogFile = File.expand_path(File.dirname(__FILE__)+"/../packages.json") # Installation specific package log
         File.open(@pkgLogFile,"w") do |f|
