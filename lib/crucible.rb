@@ -52,6 +52,8 @@ module Golden
       end
 
       def save_golden_data(dir,golden_data)
+        golden_json = "#{dir}/golden.json"
+        
         File.open(golden_json,"w") do |f|
           f.write(JSON.pretty_generate(golden_data))
         end
@@ -70,6 +72,9 @@ module Golden
 
       def build(fileName,dir)
         libName,extension = fileName.split('.')
+        if(!extension)
+          fileName = "#{libName}.go"
+        end
         golden_data = load_golden_data(dir)
         path = dir+"/"+fileName
         outfile = "#{libName}.so"

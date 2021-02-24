@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    golden (0.5.3)
+    golden (0.6.3.alpha)
       ffi (~> 1.14)
       thor (~> 1.1)
 
