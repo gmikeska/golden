@@ -1,4 +1,4 @@
-# Golden [![Gem Version](https://badge.fury.io/rb/golden.svg)](https://badge.fury.io/rb/golden)
+# Golden [![Gem Version](https://badge.fury.io/rb/golden.svg)](https://badge.fury.io/rb/golden) [![Donate with Bitcoin](https://en.cryptobadges.io/badge/micro/33nyGe6DE2HmnVVn76o9PRrBizSJ5EVfkZ)](https://en.cryptobadges.io/donate/33nyGe6DE2HmnVVn76o9PRrBizSJ5EVfkZ)
 
 ## Description
 
@@ -69,3 +69,6 @@ or from the git repository on github:
 
 Golden is covered by the BSD license, also see the LICENSE file.
 The specs are covered by the same license as [ruby/spec](https://github.com/ruby/spec), the MIT license.
+
+## Donations
+[![Donate with Bitcoin](https://en.cryptobadges.io/badge/big/33nyGe6DE2HmnVVn76o9PRrBizSJ5EVfkZ)](https://en.cryptobadges.io/donate/33nyGe6DE2HmnVVn76o9PRrBizSJ5EVfkZ)
