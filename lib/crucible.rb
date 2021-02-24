@@ -1,7 +1,9 @@
 
 module Golden
   class Crucible
+
       attr_accessor :packages, :pkgLogFile
+
       def initialize(options=nil)
         @pkgLogFile = File.expand_path("~")+"/.golden_packages.json" # Persistent package log
         # @pkgLogFile = File.expand_path(File.dirname(__FILE__)+"/../packages.json") # Gemset specific package log
@@ -12,6 +14,29 @@ module Golden
           self.save()
         else
           @packages = JSON.parse(File.open(@pkgLogFile).read)
+        end
+      end
+
+      def add_export(path, function_name)
+        source_code = File.open(path).read
+        declaration_regex = Regexp.new('func '+function_name+'.*$')
+        declaration = source_code.scan(declaration_regex)[0]
+
+        if(verbose?)
+          puts "Declaration:"
+          puts declaration
+        end
+
+        exported = "//export #{function_name}\n"+declaration
+
+        if(verbose?)
+          puts "Exported:"
+          puts exported
+        end
+
+        source_code.gsub!(declaration,exported)
+        File.open(path,"w") do |f|
+          f.write(source_code)
         end
       end
 
@@ -131,13 +156,16 @@ module Golden
           throw "No such package (#{packageName})."
         end
       end
+
       def clear
         @packages = {}
         save
       end
+
       def verbose?
         return (!!@options && !!@options[:verbose])
       end
+      
       def save
         # @pkgLogFile = File.expand_path(File.dirname(__FILE__)+"/../packages.json") # Installation specific package log
         File.open(@pkgLogFile,"w") do |f|
