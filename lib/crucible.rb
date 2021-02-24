@@ -1,4 +1,4 @@
-
+require "ffi"
 module Golden
   class Crucible
 
@@ -53,20 +53,32 @@ module Golden
 
       def save_golden_data(dir,golden_data)
         golden_json = "#{dir}/golden.json"
-        
+
         File.open(golden_json,"w") do |f|
           f.write(JSON.pretty_generate(golden_data))
         end
       end
 
-      def add_type(fileName, dir,type)
+      def add_type(fileName,golden_data_or_dir,type, map_to=nil)
         libName,extension = fileName.split('.')
-        golden_data = load_golden_data(dir)
+
+        if(golden_data_or_dir.is_a? String)
+          golden_data = load_golden_data(golden_data_or_dir)
+        else
+          golden_data = golden_data_or_dir
+        end
+
         if(!golden_data[libName]["_types"])
           golden_data[libName]["_types"] = []
         end
-        golden_data[libName]["_types"] << type
-        save_golden_data(dir,golden_data)
+
+        golden_data[libName]["_types"] << {type:map_to}
+
+        if(golden_data_or_dir.is_a? String)
+          save_golden_data(golden_data_or_dir,golden_data)
+        else
+          return golden_data
+        end
       end
 
 
@@ -138,6 +150,11 @@ module Golden
                   type = potential_type
                 end
               end
+
+              if(!FFI.find_type(type.to_sym))
+                add_type(fileName,golden_data,type)
+              end
+
               export_data[:args][name] = type
             end
           end

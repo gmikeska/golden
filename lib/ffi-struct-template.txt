@@ -1,0 +1,18 @@
+module Library
+  @@@
+  constants do |c|
+    c.include "%HEADER_FILENAME%"  # the C header file which defines required constants
+    %CONST_DEFINITIONS%
+  end
+  @@@
+
+  class %STRUCT_NAME% < FFI::Struct # note this can be also be used with FFI::ManagedStruct
+    @@@
+    struct do |s|
+      s.name 'struct %STRUCT_NAME%'  # the C typedef
+      s.include "%HEADER_FILENAME%"  # the C header file
+      %FIELD_DEFINITIONS%
+    end
+    @@@
+  end
+end

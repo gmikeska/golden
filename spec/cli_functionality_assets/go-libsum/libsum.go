@@ -12,4 +12,8 @@ func subtract(a, b int) int {
   return a - b
 }
 
+func test(a int, b int) int {
+  return a - b
+}
+
 func main() {}
