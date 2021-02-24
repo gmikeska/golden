@@ -5,7 +5,7 @@ require File.expand_path("../lib/#{File.basename(__FILE__, '.gemspec')}/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "golden"
-  spec.version       = Golden::VERSION
+  spec.version       = Golden.gem_version
   spec.authors       = ["Greg Mikeska"]
   spec.email         = ["gmikeska07@gmail.com"]
 

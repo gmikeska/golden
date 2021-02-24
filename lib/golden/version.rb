@@ -1,3 +1,17 @@
+require 'rubygems'
 module Golden
-  VERSION = '0.5.2'
+  def self.gem_version
+    Gem::Version.new VERSION::STRING
+  end
+  module VERSION
+    MAJOR = 0
+    FEATURE = 5
+    PATCH  = 3
+    PRE   = "0"
+    if(PRE && PRE != "0")
+      STRING = [MAJOR, FEATURE, PATCH, PRE].compact.join(".")
+    else
+      STRING = [MAJOR, FEATURE, PATCH].compact.join(".")
+    end
+  end
 end
