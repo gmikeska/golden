@@ -152,6 +152,7 @@ module Golden
               end
 
               if(!FFI.find_type(type.to_sym))
+                puts "adding type #{type}"
                 add_type(fileName,golden_data,type)
               end
 

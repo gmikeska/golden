@@ -56,19 +56,22 @@ module Golden
   module Library
     extend FFI::Library
     def self.new(library_file, exports)
-      @types = exports["_types"]
-      exports.delete("_types")
+      if(exports["_types"])
+        @types = exports["_types"]
+        exports.delete("_types")
+      end
 
       @exports = exports
       @library_file = library_file
 
       ffi_lib @library_file
-
-      @types.each do |type, old|
-        if(!!old)
-          typedef old.to_sym, type.to_sym
-        else
-          typedef :pointer, type.to_sym
+      if(@types)
+        @types.each do |type, old|
+          if(!!old)
+            typedef old.to_sym, type.to_sym
+          else
+            typedef :pointer, type.to_sym
+          end
         end
       end
 

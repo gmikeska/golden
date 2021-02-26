@@ -10,6 +10,8 @@ RSpec.describe 'golden' do
 
     Dir.chdir(installTestDirectory) # step into install directory to ensure Golden can see golden.json
     libsum = Golden.require("libsum")
-    expect(libsum.add(1,2)).to eq(3)
+    g = libsum.person("Greg",37)
+    m = libsum.person("Michelle",35)
+    expect(libsum.age_diff(g,m)).to eq(2)
   end
 end
