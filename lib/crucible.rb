@@ -14,7 +14,18 @@ module Golden
           @packages = JSON.parse(File.open(@pkgLogFile).read)
         end
       end
-
+      def add(path)
+        if(File.directory?(path))
+          golden_data = JSON.parse(File.open(File.expand_path(path)+"/golden.json").read)
+        elsif(File.basename == "golden" && File.extname(path) == "json")
+          golden_data = JSON.parse(File.open(path).read)
+        end
+        golden_data.keys.each do |libName|
+          puts "Adding #{libName}"
+          @packages[libName] = File.dirname(path)
+        end
+        self.save()
+      end
       def build(fileName,dir)
         libName,extension = fileName.split('.')
         if(!extension)

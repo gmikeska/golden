@@ -34,4 +34,13 @@ RSpec.describe 'cli' do
      .to_stdout_from_any_process
   end
 
+  it 'should add an existing library' do
+    Dir.chdir(buildTestDirectory)
+    system %(golden clear -f)
+    system %(golden add .)
+    expect { system %(golden list) }
+     .to output(a_string_including("libsum"))
+     .to_stdout_from_any_process
+  end
+
 end

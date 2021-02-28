@@ -5,6 +5,17 @@ require 'json'
 require_relative("../lib/crucible.rb")
 module Golden
   class Cli < Thor
+    desc "add [path]", "add library at [path] to the list of known packages"
+    method_option :verbose, :aliases => "-v", :desc => "Build with verbose logging"
+    def add(path=nil)
+      self.load(options)
+      if(!path)
+        path = Dir.pwd
+      end
+      @crucible.add(path)
+      self.save
+    end
+
     desc "build [fileName]", "build library named [fileName]"
     method_option :verbose, :aliases => "-v", :desc => "Build with verbose logging"
     def build(fileName)

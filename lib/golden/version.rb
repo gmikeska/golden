@@ -5,8 +5,8 @@ module Golden
   end
   module VERSION
     MAJOR = 0
-    FEATURE = 5
-    PATCH  = 3
+    FEATURE = 6
+    PATCH  = 0
     PRE   = "0"
     if(PRE && PRE != "0")
       STRING = [MAJOR, FEATURE, PATCH, PRE].compact.join(".")
