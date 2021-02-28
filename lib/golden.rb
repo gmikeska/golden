@@ -1,6 +1,7 @@
 require 'ffi'
 require 'json'
 require "crucible"
+require_relative("golden/version")
 module Golden
   def self.require(library)
     golden_data = self.load

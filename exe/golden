@@ -74,6 +74,11 @@ module Golden
       end
     end
 
+    desc "version", "show gem version info"
+    def version
+      puts "Golden v#{Golden.gem_version}"
+    end
+
     protected
     def load(options=nil)
       @crucible = Golden::Crucible.new(options)
