@@ -9,6 +9,7 @@ Golden is a development tool that makes it easier to wrap Go libraries for use i
 * Usage similar to the every day package manager
 * Converts .go files to .so shared libraries
 * Manages library exported function metadata in convenient JSON format
+* Update notifications as of 0.6.1 - *If you have a version prior to 0.6.1, update now to be notified when future updates are pushed to rubygems!*
 
 ## Usage
 Building a slightly modified version of the ["libsum.go" example](https://c7.se/go-and-ruby-ffi/)
