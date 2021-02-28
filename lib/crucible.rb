@@ -13,6 +13,7 @@ module Golden
         else
           @packages = JSON.parse(File.open(@pkgLogFile).read)
         end
+        set_base_config
       end
       def add(path)
         if(File.directory?(path))
@@ -118,7 +119,15 @@ module Golden
         end
         @packages[libName] = dir
       end
-
+      def config(config_name, value)
+        @packages["_config"][config_name] = value
+      end
+      def get_config(config_name)
+        @packages["_config"][config_name]
+      end
+      def unset_config(config_name)
+        @packages["_config"].delete(config_name)
+      end
       def install(packageName)
         cwd = Dir.pwd
         extDestination = File.expand_path(cwd+"/bin")
@@ -144,10 +153,24 @@ module Golden
       end
       def clear
         @packages = {}
+        set_base_config
         save
+      end
+      def set_base_config
+        if(!@packages["_config"])
+          @packages["_config"] = {}
+          self.save
+        end
+        if(!@packages["_config"]["since_last_update_check"])
+          @packages["_config"]["since_last_update_check"] = 0
+          self.save
+        end
       end
       def verbose?
         return (!!@options && !!@options[:verbose])
+      end
+      def silence_update_notifications?
+        return (@packages["_config"]["silence_updates"])
       end
       def save
         # @pkgLogFile = File.expand_path(File.dirname(__FILE__)+"/../packages.json") # Installation specific package log

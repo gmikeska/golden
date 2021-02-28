@@ -3,6 +3,7 @@ require "thor"
 require 'open3'
 require 'json'
 require_relative("../lib/crucible.rb")
+require_relative("../lib/golden/logo-banner.rb")
 module Golden
   class Cli < Thor
     desc "add [path]", "add library at [path] to the list of known packages"
@@ -20,6 +21,8 @@ module Golden
     method_option :verbose, :aliases => "-v", :desc => "Build with verbose logging"
     def build(fileName)
       self.load(options)
+      require "pry"
+      binding.pry
       @crucible.build(fileName,Dir.pwd)
       self.save
     end
@@ -48,18 +51,22 @@ module Golden
     method_option :verbose, :aliases => "-v", :desc => "List with package detail"
     def list
       self.load(options)
-      if(!@crucible.packages || @crucible.packages.keys.length == 0)
+      if(!@crucible.packages || @crucible.packages.keys.length <= 1)
         puts "No libraries have yet been built. Navigate to a go project and build one using 'golden build (LibraryName).'"
       else
         puts "Golden has access to the following libraries:"
         if(@crucible.verbose?)
           @crucible.packages.each do |name, location|
-            puts "#{name}\t#{location}"
+            if(name != "_config")
+              puts "#{name}\t#{location}"
+            end
           end
         else
-          puts @crucible.packages.keys
+          packages = @crucible.packages.keys.filter{|pkg| pkg != "_config"}
+          puts packages
         end
       end
+      self.save
     end
 
     desc "install [fileName]", "install a library built with golden to the current ruby project"
@@ -72,11 +79,32 @@ module Golden
       else
         puts "No libraries named #{packageName} are yet known to golden. You can list all known libraries with 'golden list'"
       end
+      self.save
     end
 
     desc "version", "show gem version info"
     def version
+      self.load({})
       puts "Golden v#{Golden.gem_version}"
+      if(@crucible.get_config("since_last_update_check") != 10 || @crucible.silence_update_notifications?)
+        puts Golden::Logo.build
+      end
+      self.save
+    end
+
+    desc "config", "configure Golden"
+    method_option :true, :aliases => "-t", :desc => "set a boolean config option to true"
+    method_option :false, :aliases => "-f", :desc => "set a boolean config option to false"
+    def config(config_name, value=nil)
+      self.load({})
+      if(!!options[:true])
+        value = true
+      elsif(!!options[:false])
+        value = false
+      end
+
+      @crucible.config(config_name, value)
+      self.save
     end
 
     protected
@@ -84,6 +112,31 @@ module Golden
       @crucible = Golden::Crucible.new(options)
     end
     def save
+      count = @crucible.get_config("since_last_update_check")
+      if(count >= 10 && !@crucible.silence_update_notifications?)
+        if(@crucible.get_config("update_available"))
+          update = @crucible.get_config("update_available")
+        else
+          update = Golden.update_available?
+        end
+        if(!!update)
+          if(!@crucible.get_config("update_available") || @crucible.get_config("update_available").join('.') != update.join("."))
+            @crucible.config('update_available', update) # store any discovered update locally to prevent spamming rubygems
+          end
+          puts "\n"
+          puts Golden::Logo.build
+          puts "An update is available! You're currently using v#{Golden.gem_version}. "
+          puts "To update to v#{update.join(".")} type 'gem update golden'"
+          puts "\n"
+          puts "Be sure to also update the gemfile or gemspec for any projects that use golden to load libraries."
+          puts "To silence these notifications, run 'golden config silence_updates -t'"
+        end
+        @crucible.config("since_last_update_check", 0)
+      else
+        if(!@crucible.silence_update_notifications?) #stop incrementing if updates are silenced
+          @crucible.config("since_last_update_check", count+1)
+        end
+      end
       @crucible.save
     end
   end
