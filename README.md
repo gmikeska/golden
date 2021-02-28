@@ -39,13 +39,13 @@ cd ../golden-example
 golden install libsum
 ```
 
-Additionally, you can add go libraries built manually or shared by another developer with the `add` command:
+Additionally, as of version 0.6.0, you can add libraries built manually or shared by another developer with the `add` command:
 ```bash
-golden add pathToLibraryDirectory
+golden add path/to/library/directory
 ```
 or
 ```bash
-golden add pathToLibraryDirectory/golden.json
+golden add path/to/library/directory/golden.json
 ```
 
 Then, reference the library in your ruby project:
