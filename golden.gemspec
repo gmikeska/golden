@@ -16,13 +16,13 @@ Gem::Specification.new do |spec|
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
 
-  spec.files = Dir['lib/*.rb'] + Dir['bin/*']
+  spec.files = Dir['lib/*.rb']+Dir['lib/golden/*.rb']
   # spec.files         = `git ls-files -z`.split("\x0").reject do |f|
   #   f.match(%r{^(test|spec|features)/})
   # end
   spec.bindir        = "exe"
   spec.executables   << "golden"
-  spec.require_paths = ["lib"]
+  spec.require_paths = ["lib","lib/golden"]
 
   spec.add_runtime_dependency  "ffi", "~> 1.14"
 

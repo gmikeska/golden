@@ -21,8 +21,6 @@ module Golden
     method_option :verbose, :aliases => "-v", :desc => "Build with verbose logging"
     def build(fileName)
       self.load(options)
-      require "pry"
-      binding.pry
       @crucible.build(fileName,Dir.pwd)
       self.save
     end
