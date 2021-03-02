@@ -12,7 +12,7 @@ module Golden
   module VERSION
     MAJOR = 0
     FEATURE = 6
-    PATCH  = 1
+    PATCH  = 2
     PRE   = "0"
     if(PRE && PRE != "0")
       STRING = [MAJOR, FEATURE, PATCH, PRE].compact.join(".")
